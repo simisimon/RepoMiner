@@ -2,20 +2,18 @@ import plotly.express as px
 import plotly.graph_objects as go
 import re
 
-
-def Treemap(commit_data):
+def Treemap(modified_methods):
     methods = []
-    for file in commit_data:
-        for method in file[2]:
-            data = {
-                "commit": file[0],
-                "file_name": file[1],
-                "long_name": method.long_name,
-                "code_churn": method.code_churn,
-                "change_frequency": method.change_frequency,
-                "type": method.type,
-            }
-            methods.append(data)
+    for method in modified_methods:
+        data = {
+            "commit": method.commit,
+            "file_name": method.file_name,
+            "long_name": method.long_name,
+            "code_churn": method.code_churn,
+            "change_frequency": method.change_frequency,
+            "type": method.type,
+        }
+        methods.append(data)
 
     # bei Dateien bestimmt der Average der Summe der veränderten Methoden die Färbung
     fig = px.treemap(methods,
@@ -171,9 +169,6 @@ def BarChart_Production_And_Test_Methods_Per_Commit(commits, production_methods,
                       #template="simple_white"
                       )
 
-    fig.update_xaxes(showline=True, linewidth=1.5, linecolor='black')
-    fig.update_yaxes(showline=True, linewidth=1.5, linecolor='black')
-
     # return fig
     fig.show()
 
@@ -265,7 +260,7 @@ def PieChart(co_evolved, not_co_evolved):
                           x=0.5
                       ),
                       title={
-                          'text': "test",
+                          'text': "Test",
                           'y': 0.9,
                           'x': 0.5,
                           'xanchor': 'center',
@@ -349,10 +344,10 @@ def ScatterPlot(data):
         ))
 
     fig.update_layout(autosize=False,
-                      width=1100,
+                      width=800,
                       height=550,
                       xaxis_title="Commit",
-                      yaxis_title="Number of changed files",
+                      yaxis_title="File ID's",
                       legend=dict(yanchor="top",
                                   y=0.99,
                                   xanchor="left",

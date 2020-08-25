@@ -28,22 +28,22 @@ def main():
 
             if url and firstCommit and not secondCommit and not date1 and not date2:
                 message = 'single commit'
-                repo = RepoManager(url, firstCommit=firstCommit)
+                repo = RepoManager(url, first=firstCommit)
             if url and firstCommit and secondCommit and not date1 and not date2:
                 message = 'between commits'
-                repo = RepoManager(url, firstCommit=firstCommit, secondCommit=secondCommit)
+                repo = RepoManager(url, first=firstCommit, second=secondCommit)
             if url and not firstCommit and not secondCommit and date1 and date2:
                 message = 'between datetimes'
                 repo = RepoManager(url, since=date1, to=date2)
 
-            all_methods = repo.all_methods_data
-            only_methods = repo.methods_data
-            test_methods = repo.test_methods_data
+            all_methods = repo.modified_methods
+            only_methods = repo.production_methods
+            test_methods = repo.test_methods
             projectName = repo.project_name
             commits = repo.commits
             files = repo.files
-            all_methods_count = repo.all_methods_count
-            methods_count = repo.methods_count
+            all_methods_count = repo.modified_methods_count
+            methods_count = repo.production_methods_count
             test_methods_count = repo.test_methods_count
 
             dashAppId = str(uuid.uuid1())
@@ -54,9 +54,9 @@ def main():
             dashApp.create_dashApp(__name__, app, tm, dashAppId)
 
             if os.path.isdir(url):
-                flash(f'The entered repository is a local directory and analysed for  {message}!', 'success')
+                flash(f'The entered repository is a local directory!', 'success')
             else:
-                flash(f'The entered repository is not a local directory and analysed for  {message}!', 'warning')
+                flash(f'The entered repository is not a local directory!', 'warning')
 
             return render_template('main.html',
                                    form=form,

@@ -17,7 +17,7 @@
             <form method="POST" action="{{url_for('main')}}">
                 {{ form.hidden_tag()}}
                 <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Repository Analysis</legend>
+                    <legend class="border-bottom mb-4">Configure the change-based analysis</legend>
                     <div class="form-group">
                         {{ form.input.label(class="form-control-label")}}
                         {% if form.input.errors %}
@@ -25,7 +25,7 @@
                             <div class="invalid-feedback">
                                 {% for error in form.input.errors %}
                                     <span> {{ error }}</span>
-                                {% endfor %}     
+                                {% endfor %}
                             </div>
                         {% else %}
                             {{ form.input(class="form-control form-control-lg")}}
@@ -57,43 +57,50 @@
       </div>
       <div class="col-md-6">
         <div class="content-section">
-          <h3>Status</h3>
+          <h3>Information</h3>
           <p class='text-muted'>
-              <span>
-                  Das Webinterface befindet sich derzeit in der Entwicklung.
-              </span>
+              <p>
+                  How to use the change-based analysis?
+              </p>
+              <ol>
+                    <li>Enter the path to software repository.</li>
+                    <li>Select variant of the analysis</li>
+                    <li>If necessary, enter commits to configure the analysis variant.</li>
+                    <li>Start the analysis by pressing the start button.</li>
+              </ol>
               {% if infos %}
                 <div class="wrapper">
+                    <h3> Statistical results of the analysis</h3>
                     <table class="table table-sm table-bordered">
                         <thead>
                             <tr>
-                                <th style="width:50%;">Eigenschaft</th>
-                                <th style="width:50%;">Wert</th>
+                                <th style="width:50%;">Property</th>
+                                <th style="width:50%;">Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Projektname</td>
+                                <td>Project name</td>
                                 <td>{{ infos[0] }}</td>
                             </tr>
                             <tr>
-                                <td>Anzahl Commits</td>
+                                <td>Number of analyzed commits</td>
                                 <td>{{ infos[1] }}</td>
                             </tr>
                             <tr>
-                                <td>Anzahl Dateien</td>
+                                <td>Number of analyzed files</td>
                                 <td>{{ infos[2] }}</td>
                             </tr>
                             <tr>
-                                <td>Anzahl aller Methoden</td>
+                                <td>Number of identified methods</td>
                                 <td>{{ infos[3] }}</td>
                             </tr>
                             <tr>
-                                <td>Anzahl Methoden</td>
+                                <td>Number of production methods</td>
                                 <td>{{ infos[5] }}</td>
                             </tr>
                             <tr>
-                                <td>Anzahl Testmethoden</td>
+                                <td>Number of test methods</td>
                                 <td>{{ infos[6] }}</td>
                             </tr>
                         </tbody>
@@ -123,29 +130,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for file in methods_data[0] %}
-                            {% for method in file[2] %}
-                                <tr>
-                                    <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
-                                        <span class="MoreData">
-                                            Commit: {{ file[0] }} <br>
-                                            File name: {{ file[1] }} <br>
-                                            Added: {{ method.added }} <br>
-                                            Deleted: {{ method.deleted }} <br>
-                                            {% if method.type == "RENAMED" %}
-                                            Ratio Signature: {{ method.ratio_signature }} <br>
-                                            Ratio Method Body: {{ method.ratio_method_body }} <br>
-                                            {% endif %}
-                                            {% if method.old_long_name %}
-                                            Old name: {{ method.old_long_name }}
-                                            {% endif %}
-                                        </span>
-                                    </td>
-                                    <td style="width:20%;">{{ method.type }}</td>
-                                    <td style="width:15%;">{{ method.code_churn }}</td>
-                                    <td style="width:15%;">{{ method.change_frequency }}</td>
-                                </tr>
-                            {% endfor %}
+                        {% for method in methods_data[0] %}
+                        <tr>
+                            <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
+                                <span class="MoreData">
+                                    Commit: {{ method.commit }} <br>
+                                    File name: {{ method.file_name }} <br>
+                                    Added: {{ method.added }} <br>
+                                    Deleted: {{ method.deleted }} <br>
+                                    {% if method.type == "RENAMED" %}
+                                    Ratio Signature: {{ method.ratio_signature }} <br>
+                                    Ratio Method Body: {{ method.ratio_method_body }} <br>
+                                    {% endif %}
+                                    {% if method.old_long_name %}
+                                    Old name: {{ method.old_long_name }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td style="width:20%;">{{ method.type }}</td>
+                            <td style="width:15%;">{{ method.code_churn }}</td>
+                            <td style="width:15%;">{{ method.change_frequency }}</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -161,29 +166,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for file in methods_data[1] %}
-                            {% for method in file[2] %}
-                                <tr>
-                                    <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
-                                        <span class="MoreData">
-                                            Commit: {{ file[0] }} <br>
-                                            File name: {{ file[1] }} <br>
-                                            Added: {{ method.added }} <br>
-                                            Deleted: {{ method.deleted }} <br>
-                                            {% if method.type == "RENAMED" %}
-                                            Ratio Signature: {{ method.ratio_signature }} <br>
-                                            Ratio Method Body: {{ method.ratio_method_body }} <br>
-                                            {% endif %}
-                                            {% if method.old_long_name %}
-                                            Old name: {{ method.old_long_name }}
-                                            {% endif %}
-                                        </span>
-                                    </td>
-                                    <td style="width:20%;">{{ method.type }}</td>
-                                    <td style="width:15%;">{{ method.code_churn }}</td>
-                                    <td style="width:15%;">{{ method.change_frequency }}</td>
-                                </tr>
-                            {% endfor %}
+                        {% for method in methods_data[1] %}
+                        <tr>
+                            <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
+                                <span class="MoreData">
+                                    Commit: {{ method.commit }} <br>
+                                    File name: {{ method.file_name }} <br>
+                                    Added: {{ method.added }} <br>
+                                    Deleted: {{ method.deleted }} <br>
+                                    {% if method.type == "RENAMED" %}
+                                    Ratio Signature: {{ method.ratio_signature }} <br>
+                                    Ratio Method Body: {{ method.ratio_method_body }} <br>
+                                    {% endif %}
+                                    {% if method.old_long_name %}
+                                    Old name: {{ method.old_long_name }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td style="width:20%;">{{ method.type }}</td>
+                            <td style="width:15%;">{{ method.code_churn }}</td>
+                            <td style="width:15%;">{{ method.change_frequency }}</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -199,29 +202,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for file in methods_data[2] %}
-                            {% for method in file[2] %}
-                                <tr>
-                                    <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
-                                        <span class="MoreData">
-                                            Commit: {{ file[0] }} <br>
-                                            File name: {{ file[1] }} <br>
-                                            Added: {{ method.added }} <br>
-                                            Deleted: {{ method.deleted }} <br>
-                                            {% if method.type == "RENAMED" %}
-                                            Ratio Signature: {{ method.ratio_signature }} <br>
-                                            Ratio Method Body: {{ method.ratio_method_body }} <br>
-                                            {% endif %}
-                                            {% if method.old_long_name %}
-                                            Old name: {{ method.old_long_name }}
-                                            {% endif %}
-                                        </span>
-                                    </td>
-                                    <td style="width:20%;">{{ method.type }}</td>
-                                    <td style="width:15%;">{{ method.code_churn }}</td>
-                                    <td style="width:15%;">{{ method.change_frequency }}</td>
-                                </tr>
-                            {% endfor %}
+                        {% for method in methods_data[2] %}
+                        <tr>
+                            <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
+                                <span class="MoreData">
+                                    Commit: {{ method.commit }} <br>
+                                    File name: {{ method.file_name }} <br>
+                                    Added: {{ method.added }} <br>
+                                    Deleted: {{ method.deleted }} <br>
+                                    {% if method.type == "RENAMED" %}
+                                    Ratio Signature: {{ method.ratio_signature }} <br>
+                                    Ratio Method Body: {{ method.ratio_method_body }} <br>
+                                    {% endif %}
+                                    {% if method.old_long_name %}
+                                    Old name: {{ method.old_long_name }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td style="width:20%;">{{ method.type }}</td>
+                            <td style="width:15%;">{{ method.code_churn }}</td>
+                            <td style="width:15%;">{{ method.change_frequency }}</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>

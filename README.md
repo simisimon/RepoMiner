@@ -5,7 +5,7 @@ This approach was developed in the context of our master thesis. We validated di
 
 We integrated the change-based analysis into a web application to visualize its results. Currently, we show only a table with modified methods and a zoomable tree map. The web application is still in development and has not been tested.
 
-## How to start the web application?
+## How to start the web application? (Mac OS)
 1. Clone the repository
 2. Install all missing packages
 3. Start the web application using the terminal

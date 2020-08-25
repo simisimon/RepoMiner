@@ -1,9 +1,7 @@
 from typing import Dict, List, Tuple
-
 from javalang.tree import BasicType
-
-from RepoManager.data.methods import ModifiedMethod
-from RepoManager.data.modificationTypes import Ratio
+from data.methods import ModifiedMethod
+from data.modificationTypes import Ratio
 
 
 class MatchedFiles:

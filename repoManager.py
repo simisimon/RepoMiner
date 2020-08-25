@@ -1,10 +1,10 @@
 from typing import Any, Optional
 from pydriller import RepositoryMining, GitRepository
-from RepoManager.data.modificationTypes import RepoType, ModificationType
-from RepoManager.data.methods import Method, ModifiedMethod, SummarizedMethod
-from RepoManager.data.matchedFiles import MatchedFiles, NotMatchedFiles, MatchedAnalyzedFiles, NotMatchedAnalyzedFiles
-from RepoManager.data.file import AnalyzedFile
-from RepoManager.data.commit import AnalyzedCommit
+from data.modificationTypes import RepoType, ModificationType
+from data.methods import Method, ModifiedMethod, SummarizedMethod
+from data.matchedFiles import MatchedFiles, NotMatchedFiles, MatchedAnalyzedFiles, NotMatchedAnalyzedFiles
+from data.file import AnalyzedFile
+from data.commit import AnalyzedCommit
 from dateutil import parser
 from typing import List
 import Levenshtein

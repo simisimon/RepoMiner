@@ -1,4 +1,4 @@
-from RepoManager.utils.visualization import BoxPlot, ScatterPlot, BoxPlotCoEvolvedFiles, LinePlot, PieChart, \
+from utils.visualization import BoxPlot, ScatterPlot, BoxPlotCoEvolvedFiles, LinePlot, PieChart, \
     BarChart_Production_And_Test_Methods_Per_Commit
 import numpy as np
 

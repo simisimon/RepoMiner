@@ -1,7 +1,7 @@
 from typing import List
-from RepoManager.data.file import AnalyzedFile
-from RepoManager.data.methods import ModifiedMethod
-from RepoManager.data.matchedFiles import MatchedAnalyzedFiles
+from data.file import AnalyzedFile
+from data.methods import ModifiedMethod
+from data.matchedFiles import MatchedAnalyzedFiles
 import re
 
 

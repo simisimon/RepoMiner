@@ -1,5 +1,5 @@
-from RepoManager.data.modificationTypes import ModificationType
-from RepoManager.utils.parsing import ParseMethod, ParseTestMethod
+from data.modificationTypes import ModificationType
+from utils.parsing import ParseMethod, ParseTestMethod
 from typing import List, Tuple
 import difflib
 import re

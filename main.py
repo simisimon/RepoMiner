@@ -1,8 +1,8 @@
 from flask import Flask, render_template, flash
-from RepoManager.forms import InputRepoForm
-from RepoManager.repoManager import RepoManager
-from RepoManager.utils import visualization
-import RepoManager.dashApp
+from forms import InputRepoForm
+from repoManager import RepoManager
+from utils import visualization
+import dashApp
 import os
 import uuid
 

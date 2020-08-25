@@ -17,9 +17,9 @@ We integrated the change-based analysis into a web application to visualize its 
    ```
    - on windows, the environment variable syntax depends on command line interpreter:
    ```bash
-   $ C:\path\to\app> $env:FLASK_APP = "main.py"
+   $ C:\path\to\app>set $env:FLASK_APP = "main.py"
    ```
-   - otherwise check out the [Flask introduction](https://flask.palletsprojects.com/en/1.1.x/)
+   - otherwise check out the [Flask](https://flask.palletsprojects.com/en/1.1.x/) introduction
    
 ## How to use the web application?
 1. Enter the path to a software repository. (It is recommended to clone the software repository in advance and to use the corresponding local directory.)

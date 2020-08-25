@@ -1,0 +1,174 @@
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+.bg-steel {
+  background-color: #808080;
+}
+
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.article-title {
+  color: #444444;
+}
+
+a.article-title:hover {
+  color: #428bca;
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+}
+
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3
+}
+
+.article-metadata a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
+.account-heading {
+  font-size: 2.5rem;
+}
+
+#clear {
+  margin-left: 15px;
+}
+
+#clearAll {
+  margin-left: 15px;
+}
+
+.chart {
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
+
+div.wrapper {
+	display: block;
+	overflow: auto;
+	margin: 10px;
+}
+table.scroll {
+	width: 100%;
+	background-color: #fff;
+}
+table.scroll thead {
+	width: 100%;
+	background: #666666;
+}
+table.scroll thead tr:after {
+	content: '';
+	overflow-y: scroll;
+	visibility: hidden;
+}
+table.scroll thead th {
+	flex: 1 auto;
+	display: block;
+	color: #fff;
+}
+table.scroll tbody {
+	display: block;
+	width: 100%;
+	overflow-y: auto;
+	height: auto;
+	max-height: 400px;
+}
+table.scroll thead tr,
+table.scroll tbody tr {
+	display: flex;
+}
+table.scroll tbody tr td {
+	flex: 1 auto;
+	word-wrap: break;
+}
+table.scroll thead tr th,
+table.scroll tbody tr td {
+	padding: 5px;
+	text-align-left;
+	border-bottom: 1px solid #eee;
+}
+
+.info {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
+.CellWithMoreData {
+    position: relative;
+}
+
+.MoreData {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    border: 1px;
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-color: red;
+    padding: 3px;
+    top: 25px;
+    left: 20px;
+}
+
+.CellWithMoreData:hover span.MoreData {
+    display:block;
+}
+
+

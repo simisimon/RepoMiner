@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main role="main" class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <div class="content-section">
+            <form method="POST" action="{{url_for('main')}}">
+                {{ form.hidden_tag()}}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Repository Analysis</legend>
+                    <div class="form-group">
+                        {{ form.input.label(class="form-control-label")}}
+                        {% if form.input.errors %}
+                            {{ form.input(class="form-control form-control-lg is-invalid")}}
+                            <div class="invalid-feedback">
+                                {% for error in form.input.errors %}
+                                    <span> {{ error }}</span>
+                                {% endfor %}     
+                            </div>
+                        {% else %}
+                            {{ form.input(class="form-control form-control-lg")}}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{ form.select(class="form-control", onchange="UpdateCommitFields()") }}
+                    </div>
+                    <div class="form-group">
+                      {{ form.commit1(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
+                    </div>
+                    <div class="form-group">
+                      {{ form.commit2(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
+                    </div>
+                    <div class="form-group">
+                      {{ form.date1(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
+                    </div>
+                    <div class="form-group">
+                      {{ form.date2(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-outline-info", id="start", disabled="true")}}
+                    <button id="clear" class="btn btn-outline-info" onclick="Clear()">Clear</button>
+                    <button id="clearAll" class="btn btn-outline-info" onclick="ClearAll()">Clear All</button>
+                </div>
+            </form>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="content-section">
+          <h3>Status</h3>
+          <p class='text-muted'>
+              <span>
+                  Das Webinterface befindet sich derzeit in der Entwicklung.
+              </span>
+              {% if infos %}
+                <div class="wrapper">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width:50%;">Eigenschaft</th>
+                                <th style="width:50%;">Wert</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Projektname</td>
+                                <td>{{ infos[0] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Anzahl Commits</td>
+                                <td>{{ infos[1] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Anzahl Dateien</td>
+                                <td>{{ infos[2] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Anzahl aller Methoden</td>
+                                <td>{{ infos[3] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Anzahl Methoden</td>
+                                <td>{{ infos[5] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Anzahl Testmethoden</td>
+                                <td>{{ infos[6] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              {% endif %}
+            </ul>
+          </p>
+        </div>
+      </div>
+      <div id="table" class="col-md-12">
+        {% if methods_data %}
+          <div class="content-section">
+              <select class="custom-select" id="table-select" onchange="SwitchTables()">
+                  <option value="all">All Methods</option>
+                  <option value="only">Only Methods</option>
+                  <option value="test">Test Methods</option>
+              </select>
+              <div class="wrapper" id="all_methods_wrapper" style="display:block">
+                <table border="0" cellpadding="0" cellspacing="0" class="scroll table-hover table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width:50%;">Methode</th>
+                            <th style="width:20%;">Typ</th>
+                            <th style="width:15%;">Code Churn</th>
+                            <th style="width:15%;">Change Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in methods_data[0] %}
+                            {% for method in file[2] %}
+                                <tr>
+                                    <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
+                                        <span class="MoreData">
+                                            Commit: {{ file[0] }} <br>
+                                            File name: {{ file[1] }} <br>
+                                            Added: {{ method.added }} <br>
+                                            Deleted: {{ method.deleted }} <br>
+                                            {% if method.type == "RENAMED" %}
+                                            Ratio Signature: {{ method.ratio_signature }} <br>
+                                            Ratio Method Body: {{ method.ratio_method_body }} <br>
+                                            {% endif %}
+                                            {% if method.old_long_name %}
+                                            Old name: {{ method.old_long_name }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td style="width:20%;">{{ method.type }}</td>
+                                    <td style="width:15%;">{{ method.code_churn }}</td>
+                                    <td style="width:15%;">{{ method.change_frequency }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+              <div class="wrapper" id="only_methods_wrapper" style="display:none">
+                <table border="0" cellpadding="0" cellspacing="0" class="scroll table-hover table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width:50%;">Methode</th>
+                            <th style="width:20%;">Typ</th>
+                            <th style="width:15%;">Code Churn</th>
+                            <th style="width:15%;">Change Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in methods_data[1] %}
+                            {% for method in file[2] %}
+                                <tr>
+                                    <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
+                                        <span class="MoreData">
+                                            Commit: {{ file[0] }} <br>
+                                            File name: {{ file[1] }} <br>
+                                            Added: {{ method.added }} <br>
+                                            Deleted: {{ method.deleted }} <br>
+                                            {% if method.type == "RENAMED" %}
+                                            Ratio Signature: {{ method.ratio_signature }} <br>
+                                            Ratio Method Body: {{ method.ratio_method_body }} <br>
+                                            {% endif %}
+                                            {% if method.old_long_name %}
+                                            Old name: {{ method.old_long_name }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td style="width:20%;">{{ method.type }}</td>
+                                    <td style="width:15%;">{{ method.code_churn }}</td>
+                                    <td style="width:15%;">{{ method.change_frequency }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+              <div class="wrapper" id="test_methods_wrapper" style="display:none">
+                <table border="0" cellpadding="0" cellspacing="0" class="scroll table-hover table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width:50%;">Methode</th>
+                            <th style="width:20%;">Typ</th>
+                            <th style="width:15%;">Code Churn</th>
+                            <th style="width:15%;">Change Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in methods_data[2] %}
+                            {% for method in file[2] %}
+                                <tr>
+                                    <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
+                                        <span class="MoreData">
+                                            Commit: {{ file[0] }} <br>
+                                            File name: {{ file[1] }} <br>
+                                            Added: {{ method.added }} <br>
+                                            Deleted: {{ method.deleted }} <br>
+                                            {% if method.type == "RENAMED" %}
+                                            Ratio Signature: {{ method.ratio_signature }} <br>
+                                            Ratio Method Body: {{ method.ratio_method_body }} <br>
+                                            {% endif %}
+                                            {% if method.old_long_name %}
+                                            Old name: {{ method.old_long_name }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td style="width:20%;">{{ method.type }}</td>
+                                    <td style="width:15%;">{{ method.code_churn }}</td>
+                                    <td style="width:15%;">{{ method.change_frequency }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+          </div>
+        {% endif %}
+      </div>
+        {% if treemap %}
+          <div class="col-md-12">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe id="treemap" class="embed-responsive-item" src="http://127.0.0.1:5000/{{ infos[4] }}/"/>
+            </div>
+          </div>
+        {% endif %}
+    </div>
+  </main>
+{% endblock %}

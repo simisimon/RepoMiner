@@ -7,13 +7,14 @@ import re
 java_test_annotations = ["@BeforeClass", "@AfterClass", "@Before", "@After", "@Test", "@Parameters",
                          "@ParameterizedTest", "@MethodSource"]
 
-qualifiers = ["public", "static", "final", "protected"]
+qualifiers = ["public", "protected", "private"]
 
 
 class Method:
     """
     This class represents a method that contains various informations.
     """
+
     def __init__(self, func, sourceCode, commitInfo):
         self.name = func.name
         self.long_name = func.long_name
@@ -62,8 +63,17 @@ class Method:
     def signature(self) -> str:
         """Returns the signature of a method."""
         lines = self.source_code.splitlines()
-        signature = lines[0] if not any(annotation in lines[0] for annotation in java_test_annotations) else \
-            lines[1]
+
+        if any(qualifier in lines[0] for qualifier in qualifiers):
+            signature = lines[0]
+        else:
+            if any(annotation in lines[0] for annotation in java_test_annotations):
+                signature = lines[1]
+            else:
+                signature = lines[0]
+
+        signature = re.sub("{", "", signature)
+        signature = re.sub("@Test", "", signature)
         return signature
 
     @property
@@ -76,11 +86,21 @@ class Method:
 
         return method_body
 
+    @property
+    def qualifier(self) -> str:
+        """Returns the qualifier of a method."""
+        qualifier = ""
+        for x in qualifiers:
+            if x in self.signature:
+                qualifier = x
+        return qualifier
+
 
 class ModifiedMethod(Method):
     """
     This class represents a modified methods that contains various information about the modifications
     """
+
     def __init__(self, methodBefore=None, methodAfter=None, modificationType=None, ratio=None, lines=None):
         if methodAfter is not None and methodBefore is not None:
             super().__init__(methodAfter, methodAfter.source_code, methodAfter.commit)
@@ -187,8 +207,7 @@ class ModifiedMethod(Method):
     @property
     def parsed_method(self):
         """
-        If method is a test method return the a dict with test method informations
-        else return dict with method informations.
+        Returns information for methods obtained from parsing.
         """
         if not self.test_method:
             return ParseMethod(self.source_code)
@@ -235,14 +254,12 @@ class SummarizedMethod:
     @property
     def summarized_method(self) -> Method:
         if self.isTestMethod:
-            #code_churn = self.__CalculateCodeChurn(self.test_methods)
+            # code_churn = self.__CalculateCodeChurn(self.test_methods)
             test_method = self.test_methods[-1]
-            #test_method.code_churn = code_churn
+            # test_method.code_churn = code_churn
             return test_method
         else:
-            #code_churn = self.__CalculateCodeChurn(self.methods)
+            # code_churn = self.__CalculateCodeChurn(self.methods)
             method = self.methods[-1]
-            #method.code_churn = code_churn
+            # method.code_churn = code_churn
             return method
-
-

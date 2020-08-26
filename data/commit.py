@@ -15,7 +15,7 @@ class AnalyzedCommit:
 
     @property
     def hash(self) -> str:
-        """Return commits hash."""
+        """Returns commit hash."""
         return self.__commit.hash
 
     @property

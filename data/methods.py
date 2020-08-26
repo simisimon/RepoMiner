@@ -1,4 +1,4 @@
-from data.modificationTypes import ModificationType
+from data.types import ModificationType
 from utils.parsing import ParseMethod, ParseTestMethod
 from typing import List, Tuple
 import difflib

@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 from javalang.tree import BasicType
 from data.methods import ModifiedMethod
-from data.modificationTypes import Ratio
+from data.types import Ratio
 
 
 class MatchedFiles:

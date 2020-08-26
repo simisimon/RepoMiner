@@ -1,6 +1,6 @@
 from typing import Any, Optional
 from pydriller import RepositoryMining, GitRepository
-from data.modificationTypes import RepoType, ModificationType
+from data.types import RepoType, ModificationType
 from data.methods import Method, ModifiedMethod, SummarizedMethod
 from data.matchedFiles import MatchedFiles, NotMatchedFiles, MatchedAnalyzedFiles, NotMatchedAnalyzedFiles
 from data.file import AnalyzedFile
@@ -17,7 +17,7 @@ java_test_annotations = ["@BeforeClass", "@AfterClass", "@Before", "@After", "@T
 JAVA_FILE_SUFFIX = '.java'
 
 
-class RepoManager:
+class RepoMiner:
     """
     This class represents a repoManager for analysing a repository.
     """

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash
 from forms import InputRepoForm
-from repoManager import RepoManager
+from repoMiner import RepoMiner
 from utils import visualization
 import dashApp
 import os
@@ -28,13 +28,13 @@ def main():
 
             if url and firstCommit and not secondCommit and not date1 and not date2:
                 message = 'single commit'
-                repo = RepoManager(url, first=firstCommit)
+                repo = RepoMiner(url, first=firstCommit)
             if url and firstCommit and secondCommit and not date1 and not date2:
                 message = 'between commits'
-                repo = RepoManager(url, first=firstCommit, second=secondCommit)
+                repo = RepoMiner(url, first=firstCommit, second=secondCommit)
             if url and not firstCommit and not secondCommit and date1 and date2:
                 message = 'between datetimes'
-                repo = RepoManager(url, since=date1, to=date2)
+                repo = RepoMiner(url, since=date1, to=date2)
 
             all_methods = repo.modified_methods
             only_methods = repo.production_methods

@@ -502,12 +502,12 @@ class RepoMiner:
         if len(methodsBefore) != len(methodsAfter):
             if len(methodsBefore) == 0 and len(methodsAfter) == 1:
                 modifiedMethods.append(ModifiedMethod(methodAfter=methodsAfter[0][0],
-                                                      modificationType=ModificationType.ADDED,
+                                                      modificationType=ModificationType.ADDED.name,
                                                       lines=lines))
                 return modifiedMethods
             elif len(methodsBefore) == 1 and len(methodsAfter) == 0:
                 modifiedMethods.append(ModifiedMethod(methodBefore=methodsBefore[0][0],
-                                                      modificationType=ModificationType.DELETED,
+                                                      modificationType=ModificationType.DELETED.name,
                                                       lines=lines))
                 return modifiedMethods
 

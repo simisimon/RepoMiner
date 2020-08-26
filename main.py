@@ -6,10 +6,10 @@ import dashApp
 import os
 import uuid
 
-
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '12345'
+
 
 @app.route("/")
 @app.route("/main", methods=['GET', 'POST'])
@@ -70,5 +70,6 @@ def main():
             return render_template('main.html', form=form)
     return render_template('main.html', form=form)
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

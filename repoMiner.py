@@ -19,7 +19,7 @@ JAVA_FILE_SUFFIX = '.java'
 
 class RepoMiner:
     """
-    This class represents a repoManager for analysing a repository.
+    This class represents a repoMiner for analysing the historical changes in software repositories.
     """
 
     def __init__(self, repoURL, first=None, second=None, fromCommit=None, since=None, to=None):
@@ -47,7 +47,7 @@ class RepoMiner:
             print("all commits")
             self.repo = RepositoryMining(path_to_repo=repoURL)
 
-        print("repoManager was created")
+        print("repoMiner was created")
 
         self.__files = []  # number of analyzed files
         self.__files_with_methods = []
@@ -331,12 +331,12 @@ class RepoMiner:
 
         # mapping deleted lines and methodsBefore and adding modification type
         for method in methodsBefore:
-            modificationType = RepoManager.GetTypeOfMethods(method, lines[1], after=False)
+            modificationType = RepoMiner.GetTypeOfMethods(method, lines[1], after=False)
             modifiedMethodsBefore.append((method, modificationType))
 
         # mapping added lines and methodsAfter and adding modification type
         for method in methodsAfter:
-            modificationType = RepoManager.GetTypeOfMethods(method, lines[0], after=True)
+            modificationType = RepoMiner.GetTypeOfMethods(method, lines[0], after=True)
             modifiedMethodsAfter.append((method, modificationType))
 
         # get renamed methods in modifiedMethodsBefore
@@ -346,7 +346,7 @@ class RepoMiner:
         methodsAfterRenamed = [x for x in modifiedMethodsAfter if x[1] == ModificationType.RENAMED]
 
         # get mapped renamed methods of methodsBeforeRenamed and methodsAfterRenamed
-        renamedMethods = RepoManager.GetRenamedMethods(methodsBeforeRenamed,
+        renamedMethods = RepoMiner.GetRenamedMethods(methodsBeforeRenamed,
                                                        methodsAfterRenamed,
                                                        lines)
 
@@ -358,10 +358,10 @@ class RepoMiner:
                                     method[1] == ModificationType.COMPLETELY_DELETED]
 
         # remove method that are already considered
-        modifiedMethodsBefore = RepoManager.RemoveMethods(modifiedMethodsBefore, completelyDeletedMethods)
-        modifiedMethodsBefore = RepoManager.RemoveMethods(modifiedMethodsBefore, methodsBeforeRenamed)
-        modifiedMethodsAfter = RepoManager.RemoveMethods(modifiedMethodsAfter, newlyAddedMethods)
-        modifiedMethodsAfter = RepoManager.RemoveMethods(modifiedMethodsAfter, methodsAfterRenamed)
+        modifiedMethodsBefore = RepoMiner.RemoveMethods(modifiedMethodsBefore, completelyDeletedMethods)
+        modifiedMethodsBefore = RepoMiner.RemoveMethods(modifiedMethodsBefore, methodsBeforeRenamed)
+        modifiedMethodsAfter = RepoMiner.RemoveMethods(modifiedMethodsAfter, newlyAddedMethods)
+        modifiedMethodsAfter = RepoMiner.RemoveMethods(modifiedMethodsAfter, methodsAfterRenamed)
 
         # mapping methodsBefore and methodsAfter
         for methodBefore in modifiedMethodsBefore:

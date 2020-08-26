@@ -97,11 +97,11 @@
                             </tr>
                             <tr>
                                 <td>Number of production methods</td>
-                                <td>{{ infos[5] }}</td>
+                                <td>{{ infos[4] }}</td>
                             </tr>
                             <tr>
                                 <td>Number of test methods</td>
-                                <td>{{ infos[6] }}</td>
+                                <td>{{ infos[5] }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -233,7 +233,7 @@
         {% if treemap %}
           <div class="col-md-12">
             <div class="embed-responsive embed-responsive-16by9">
-                <iframe id="treemap" class="embed-responsive-item" src="http://127.0.0.1:5000/{{ infos[4] }}/"/>
+                <iframe id="treemap" class="embed-responsive-item" src="http://127.0.0.1:5000/{{ treemap[1] }}/"/>
             </div>
           </div>
         {% endif %}

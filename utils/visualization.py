@@ -2,9 +2,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import re
 
-def Treemap(modified_methods):
+def Treemap(production_methods):
     methods = []
-    for method in modified_methods:
+    for method in production_methods:
         data = {
             "commit": method.commit,
             "file_name": method.file_name,
@@ -24,116 +24,22 @@ def Treemap(modified_methods):
                      hover_data=["long_name", "type"],
                      )
 
+    #fig.show()
     return fig
 
 
-def ShowTreemap(modified_methods):
-    methods = []
-    for method in modified_methods:
-        data = {
-            "commit": method.commit,
-            "file_name": method.file_name,
-            "long_name": method.long_name,
-            "code_churn": method.code_churn,
-            "change_frequency": method.change_frequency,
-        }
-        methods.append(data)
+def MethodsPerCommit(repo):
 
-    # bei Dateien bestimmt der Average der Summe der veränderten Methoden die Färbung
-    fig = px.treemap(methods,
-                     path=['commit', 'file_name', 'long_name'],
-                     values='change_frequency',
-                     color='code_churn',
-                     color_continuous_scale='Reds',
-                     hover_data=["long_name"],
-                     )
+    commits = []
+    for i in range(0, repo.commits):
+        commits.append(i + 1)
 
-    fig.show()
+    production_methods = []
+    test_methods = []
+    for commit in repo.analyzed_commits:
+        test_methods.append(commit.test_methods_count)
+        production_methods.append(commit.production_methods_count)
 
-
-def TreeMapOnlyMethods(modified_methods):
-    methods = []
-    for method in modified_methods:
-        name = re.sub('<T>', '', method.file_name)
-        data = {
-            "commit": method.commit,
-            "file_name": name,
-            "name": method.name,
-            "code_churn": method.code_churn,
-            "change_frequency": method.change_frequency,
-        }
-        methods.append(data)
-
-    # bei Dateien bestimmt der Average der Summe der veränderten Methoden die Färbung
-    fig = px.treemap(methods,
-                     path=['commit', 'file_name', "name"],
-                     values='change_frequency',
-                     color='code_churn',
-                     color_continuous_scale='Reds',
-                     )
-
-    fig.update_layout(autosize=False,
-                      width=800,
-                      height=550)
-
-    fig.show()
-
-
-def BarChart_Production_Test_Methods(production_methods, test_methods):
-    methods = ["Test Methods", "Production Methods"]
-    data = [test_methods, production_methods]
-    fig = go.Figure(data=[go.Bar(x=methods,
-                                 y=data,
-                                 text=data,
-                                 textposition='auto',
-                                 width=[0.1, 0.1],
-                                 marker_color=['crimson', 'cornflowerblue'])])
-
-    fig.update_layout(autosize=False,
-                      width=750,
-                      height=750,
-                      bargap=0.5,
-                      yaxis=dict(
-                          title='Number of Methods',
-                          titlefont_size=16,
-                          tickfont_size=14,
-                      ),
-                      xaxis=dict(
-                          title='Methods',
-                          titlefont_size=16,
-                          tickfont_size=14,
-                      ))
-
-    # return fig
-    fig.show()
-
-
-def BarChart_Methods_Per_Commit(number_commits, methods_per_commit):
-    fig = go.Figure(data=[go.Bar(x=methods_per_commit,
-                                 y=number_commits,
-                                 marker_color='cornflowerblue'
-                                 )])
-
-    fig.update_layout(autosize=False,
-                      width=1200,
-                      height=750,
-                      yaxis=dict(
-                          title='Number of Modified Methods in the Commit',
-                          # titlefont_size=16,
-                          # tickfont_size=14,
-                      ),
-                      xaxis=dict(
-                          title='Analyzed Commit',
-                          # titlefont_size=16,
-                          # tickfont_size=14,
-                          # tickmode='linear'
-                      ))
-    # xaxis_tickangle=-45)
-    # return fig
-    fig.show()
-
-
-def BarChart_Production_And_Test_Methods_Per_Commit(commits, production_methods, test_methods):
     fig = go.Figure(data=[go.Bar(name="Production Methods",
                                  x=commits,
                                  y=production_methods,
@@ -165,12 +71,11 @@ def BarChart_Production_And_Test_Methods_Per_Commit(commits, production_methods,
                           y=0.99,
                           xanchor="right",
                           x=0.99
-                      ),
-                      #template="simple_white"
-                      )
+                      ))
 
-    # return fig
-    fig.show()
+    #fig.show()
+    return fig
+
 
 
 def PieChart_Production_And_Test_Methods(production_methods, test_methods):
@@ -186,29 +91,6 @@ def PieChart_Production_And_Test_Methods(production_methods, test_methods):
                       height=600)
 
     # return fig
-    fig.show()
-
-
-def Table_Matched_Files(matched_files):
-    production_files = [x.file_name for x in matched_files]
-    test_files = [x.test_file_name for x in matched_files]
-
-    fig = go.Figure(data=[go.Table(header=dict(values=['Production Files', 'Test Files']),
-                                   cells=dict(values=[production_files, test_files]))
-                          ])
-
-    fig.update_layout(width=1200)
-
-    fig.show()
-
-
-def Table_Not_Matched_Files(prod_files, test_files):
-    fig = go.Figure(data=[go.Table(header=dict(values=['Production Files', 'Test Files']),
-                                   cells=dict(values=[prod_files, test_files]))
-                          ])
-
-    fig.update_layout(width=1200)
-
     fig.show()
 
 
@@ -268,46 +150,6 @@ def PieChart(co_evolved, not_co_evolved):
                       )
 
     # return fig
-    fig.show()
-
-
-def BoxPlot(total, added, deleted, other):
-    fig = go.Figure()
-
-    fig.add_trace(go.Box(y=total, name="All Changes in Methods", marker_color="cornflowerblue"))
-    fig.add_trace(go.Box(y=added, name="Added Lines in Methods", marker_color="green"))
-    fig.add_trace(go.Box(y=deleted, name="Deleted Lines in Methods", marker_color="indianred"))
-    fig.add_trace(go.Box(y=other, name="Other Changes", marker_color="grey"))
-
-    fig.update_layout(width=900,
-                      height=550,
-                      yaxis_title='Distribution of Changes in Changed Files',
-                      # legend=dict(
-                      #    yanchor="top",
-                      #     y=0.99,
-                      #    xanchor="right",
-                      #   x=0.99
-                      # )
-                      showlegend=False
-                      )
-
-    fig.show()
-
-
-def LineChart(total, added, deleted):
-    fig = go.Figure()
-
-    fig.add_trace(go.Scatter(x=deleted, y=total,
-                             mode='lines',
-                             name='lines'))
-    fig.add_trace(go.Scatter(x=added, y=total,
-                             mode='lines+markers',
-                             name='lines+markers'))
-
-    fig.update_layout(width=800,
-                      height=550,
-                      yaxis_title='Composition of Changes in Files')
-
     fig.show()
 
 
@@ -372,21 +214,6 @@ def BoxPlotCoEvolvedFiles(co_evolved, not_co_evolved):
                       #    xanchor="right",
                       #   x=0.99
                       # )
-                      showlegend=False
-                      )
-
-    fig.show()
-
-
-def LinePlot(commits, co_evolved):
-    fig = go.Figure()
-
-    fig.add_trace(go.Scatter(x=commits, y=co_evolved, line_shape='hv'))
-
-    fig.update_layout(width=900,
-                      height=550,
-                      yaxis_title='Co-Evolved Commits',
-                      xaxis_title='Commits',
                       showlegend=False
                       )
 

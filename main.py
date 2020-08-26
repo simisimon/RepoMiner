@@ -11,11 +11,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '12345'
 
 
+def getRandomId():
+    return str(uuid.uuid1())
+
+
 @app.route("/")
 @app.route("/main", methods=['GET', 'POST'])
 def main():
     form = InputRepoForm()
-    message = None
 
     if form.validate_on_submit():
         try:
@@ -27,13 +30,10 @@ def main():
             date2 = form.date2.data
 
             if url and firstCommit and not secondCommit and not date1 and not date2:
-                message = 'single commit'
                 repo = RepoMiner(url, first=firstCommit)
             if url and firstCommit and secondCommit and not date1 and not date2:
-                message = 'between commits'
                 repo = RepoMiner(url, first=firstCommit, second=secondCommit)
             if url and not firstCommit and not secondCommit and date1 and date2:
-                message = 'between datetimes'
                 repo = RepoMiner(url, since=date1, to=date2)
 
             all_methods = repo.modified_methods
@@ -46,12 +46,13 @@ def main():
             methods_count = repo.production_methods_count
             test_methods_count = repo.test_methods_count
 
-            dashAppId = str(uuid.uuid1())
-            infos = [projectName, commits, files, all_methods_count, dashAppId, methods_count, test_methods_count]
+            infos = [projectName, commits, files, all_methods_count, methods_count, test_methods_count]
             methods_data = [all_methods, only_methods, test_methods]
-            tm = visualization.Treemap(all_methods)
+            tm = [visualization.Treemap(only_methods), getRandomId()]
+            #bc = [visualization.MethodsPerCommit(repo), getRandomId()]
 
-            dashApp.create_dashApp(__name__, app, tm, dashAppId)
+            dashApp.create_dashApp(__name__, app, tm[0], tm[1])
+            #dashApp.create_dashApp(__name__, app, bc[0], bc[1])
 
             if os.path.isdir(url):
                 flash(f'The entered repository is a local directory!', 'success')
@@ -62,7 +63,8 @@ def main():
                                    form=form,
                                    methods_data=methods_data,
                                    infos=infos,
-                                   treemap=tm)
+                                   treemap=tm,
+                                   )
 
         except Exception as e:
             flash(f'Something went wrong', 'danger')

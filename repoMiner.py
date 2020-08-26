@@ -12,7 +12,7 @@ import re
 import time
 
 java_test_annotations = ["@BeforeClass", "@AfterClass", "@Before", "@After", "@Test", "@Parameters",
-                         "@ParameterizedTest", "@MethodSource", "import org.junit"]
+                         "@ParameterizedTest", "@MethodSource"]
 
 JAVA_FILE_SUFFIX = '.java'
 
@@ -42,10 +42,10 @@ class RepoMiner:
                 raise Exception("Entered Datetime is not valid.")
         elif fromCommit is not None:
             self.repo = RepositoryMining(path_to_repo=repoURL, from_commit=fromCommit)
-            print("from commit")
+            self.__repo_type = RepoType.FROM_COMMIT
         else:
-            print("all commits")
             self.repo = RepositoryMining(path_to_repo=repoURL)
+            self.__repo_type = RepoType.ALL
 
         print("repoMiner was created")
 
@@ -260,14 +260,15 @@ class RepoMiner:
             self.__analyzed_commits.append(AnalyzedCommit(commit, analyzed_files))
 
         self.__CalculateFrequencyOfChanges(self.__modified_methods)
-        self.__GetMatchedFiles()
+        if self.__repo_type == RepoType.BETWEEN_COMMITS or self.__repo_type == RepoType.SINGLE_COMMIT:
+            self.__GetMatchedFiles()
         # self.__GetMultipleTimesRenamedMethods()
 
     @staticmethod
     def IsTestFile(file) -> bool:
         files = re.findall(r'(test.java)|(tests.java)', file.filename.lower())
         imports = re.findall(r'org.junit.*',
-                                      file.source_code.lower()) if file.source_code is not None else False
+                             file.source_code.lower()) if file.source_code is not None else False
         path = re.findall(r'src\\test', file.new_path.lower()) if file.new_path is not None else False
 
         after = any(annotation in file.source_code for annotation in java_test_annotations) if \
@@ -347,8 +348,8 @@ class RepoMiner:
 
         # get mapped renamed methods of methodsBeforeRenamed and methodsAfterRenamed
         renamedMethods = RepoMiner.GetRenamedMethods(methodsBeforeRenamed,
-                                                       methodsAfterRenamed,
-                                                       lines)
+                                                     methodsAfterRenamed,
+                                                     lines)
 
         # get added methods (only additions)
         newlyAddedMethods = [method for method in modifiedMethodsAfter if method[1] == ModificationType.NEWLY_ADDED]
@@ -520,7 +521,7 @@ class RepoMiner:
                 if ratio_signature >= 0.9:
                     MIN_SIMILARITY_METHOD_BODY = similarity
                 else:
-                    MIN_SIMILARITY_METHOD_BODY = ((1-similarity)/2)+similarity
+                    MIN_SIMILARITY_METHOD_BODY = ((1 - similarity) / 2) + similarity
 
                 if len(methodsBefore) == 1 and len(methodsAfter) == 1:
                     renamedMethodPairs.append(current_object)

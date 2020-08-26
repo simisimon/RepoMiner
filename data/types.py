@@ -16,6 +16,8 @@ class RepoType(Enum):
     SINGLE_COMMIT = 2
     BETWEEN_COMMITS = 3
     DATETIME = 4
+    ALL = 5
+    FROM_COMMIT = 6
 
 
 class Ratio(Enum):

@@ -1,5 +1,5 @@
 from data.types import ModificationType
-from utils.parsing import ParseMethod, ParseTestMethod
+from utils.parsing import ParseMethod, ParseTestMethod, GetReturnTypeMethod, GetAccessModifier, GetMethodName
 from typing import List, Tuple
 import difflib
 import re
@@ -7,7 +7,7 @@ import re
 java_test_annotations = ["@BeforeClass", "@AfterClass", "@Before", "@After", "@Test", "@Parameters",
                          "@ParameterizedTest", "@MethodSource"]
 
-qualifiers = ["public", "protected", "private"]
+modifiers = ["public", "protected", "private", "static", "final", "native", "synchronized", "abstract"]
 
 
 class Method:
@@ -50,7 +50,7 @@ class Method:
         for line in lines:
             line = line.rstrip()
             if any(x in line for x in java_test_annotations):
-                if any(y in line for y in qualifiers):
+                if any(y in line for y in modifiers):
                     code_lines.append((lineNumber, line))
                     lineNumber = lineNumber + 1
             else:
@@ -64,7 +64,7 @@ class Method:
         """Returns the signature of a method."""
         lines = self.source_code.splitlines()
 
-        if any(qualifier in lines[0] for qualifier in qualifiers):
+        if any(modifier in lines[0] for modifier in modifiers):
             signature = lines[0]
         else:
             if any(annotation in lines[0] for annotation in java_test_annotations):
@@ -87,13 +87,19 @@ class Method:
         return method_body
 
     @property
-    def qualifier(self) -> str:
+    def access_modifier(self) -> str:
         """Returns the qualifier of a method."""
-        qualifier = ""
-        for x in qualifiers:
-            if x in self.signature:
-                qualifier = x
-        return qualifier
+        return GetAccessModifier(self.signature)
+
+    @property
+    def return_type(self) -> str:
+        """Returns the return type."""
+        return GetReturnTypeMethod(self.signature)
+
+    @property
+    def parsed_method_name(self) -> str:
+        """Returns the method name obtained fromm parsing."""
+        return GetMethodName(self.signature)
 
 
 class ModifiedMethod(Method):

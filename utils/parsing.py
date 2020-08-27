@@ -1,8 +1,11 @@
 import javalang
+import re
 from javalang.parser import JavaSyntaxError
 from javalang.tree import Literal, MemberReference, MethodInvocation, \
     BinaryOperation, TypeArgument, BasicType, VariableDeclarator, \
     ClassCreator, MethodDeclaration, ConstructorDeclaration, FieldDeclaration
+
+modifiers = ["public", "protected", "private", "static", "final", "native", "synchronized", "abstract"]
 
 
 def ParseMethod(method):
@@ -156,3 +159,53 @@ def __ParseLocalVariable(node):
     return {"name": node.declarators[0].name,
             "qualifier": qualifier,
             "declaratores": declarator}
+
+
+def GetReturnTypeMethod(signature):
+    """Parses the methods signature to extract the return type"""
+    try:
+        method_signature = javalang.parse.parse_member_signature(signature)
+    except JavaSyntaxError:
+        return None
+
+    if method_signature.return_type is None:
+        return_type = "void"
+    else:
+        return_type = method_signature.return_type.name
+
+    return return_type
+
+
+def GetAccessModifier(signature):
+    """Parses the method signature to extract the access modifiers."""
+    access_modifiers = []
+    try:
+        method_signature = javalang.parse.parse_member_signature(signature)
+    except JavaSyntaxError:
+        return None
+
+    if isinstance(method_signature, MethodDeclaration):
+        for x in method_signature.modifiers:
+            access_modifiers.append(x)
+    else:
+        for x in modifiers:
+            match = re.search(x, signature)
+            if match:
+                access_modifiers.append(x)
+
+    return access_modifiers
+
+
+def GetMethodName(signature):
+    """Parses the method signature to extract the method name."""
+    try:
+        method_signature = javalang.parse.parse_member_signature(signature)
+    except JavaSyntaxError:
+        return None
+
+    if isinstance(method_signature, MethodDeclaration):
+        name = method_signature.name
+    else:
+        name = None
+
+    return name

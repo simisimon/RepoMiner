@@ -46,13 +46,15 @@ def main():
             methods_count = repo.production_methods_count
             test_methods_count = repo.test_methods_count
 
-            infos = [projectName, commits, files, all_methods_count, methods_count, test_methods_count]
-            methods_data = [all_methods, only_methods, test_methods]
-            tm = [visualization.Treemap(only_methods), getRandomId()]
-            #bc = [visualization.MethodsPerCommit(repo), getRandomId()]
+            randomId = getRandomId()
 
-            dashApp.create_dashApp(__name__, app, tm[0], tm[1])
-            #dashApp.create_dashApp(__name__, app, bc[0], bc[1])
+            infos = [projectName, commits, files, all_methods_count, methods_count, test_methods_count, randomId]
+            methods_data = [all_methods, only_methods, test_methods]
+            tm = visualization.Treemap(only_methods)
+            bc = visualization.MethodsPerCommit(repo)
+
+            charts = [tm, bc]
+            dashApp.create_dashApp(__name__, app, charts, randomId)
 
             if os.path.isdir(url):
                 flash(f'The entered repository is a local directory!', 'success')

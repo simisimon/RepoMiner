@@ -1,9 +1,10 @@
 import javalang
 import re
+from data.parameters import MethodParameter
 from javalang.parser import JavaSyntaxError
 from javalang.tree import Literal, MemberReference, MethodInvocation, \
     BinaryOperation, TypeArgument, BasicType, VariableDeclarator, \
-    ClassCreator, MethodDeclaration, ConstructorDeclaration, FieldDeclaration
+    ClassCreator, MethodDeclaration, ConstructorDeclaration, FieldDeclaration, FormalParameter
 
 modifiers = ["public", "protected", "private", "static", "final", "native", "synchronized", "abstract"]
 
@@ -161,7 +162,7 @@ def __ParseLocalVariable(node):
             "declaratores": declarator}
 
 
-def GetReturnTypeMethod(signature):
+def GetReturnType(signature):
     """Parses the methods signature to extract the return type"""
     try:
         method_signature = javalang.parse.parse_member_signature(signature)
@@ -209,3 +210,20 @@ def GetMethodName(signature):
         name = None
 
     return name
+
+
+def GetFullParameters(signature):
+    """Parses the method signature to extract the full parameters."""
+    parameters = []
+    try:
+        method_signature = javalang.parse.parse_member_signature(signature)
+    except JavaSyntaxError:
+        return parameters
+
+    print(method_signature.parameters)
+    for x in method_signature.parameters:
+        if isinstance(x, FormalParameter):
+            print(x)
+            parameters.append(MethodParameter(x.type.name, x.name, x.varargs))
+
+    return parameters

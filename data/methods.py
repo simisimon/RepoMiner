@@ -1,5 +1,7 @@
 from data.types import ModificationType
-from utils.parsing import ParseMethod, ParseTestMethod, GetReturnTypeMethod, GetAccessModifier, GetMethodName
+from data.parameters import MethodParameter
+from utils.parsing import ParseMethod, ParseTestMethod, GetReturnType, GetAccessModifier, GetMethodName, \
+    GetFullParameters
 from typing import List, Tuple
 import difflib
 import re
@@ -94,7 +96,12 @@ class Method:
     @property
     def return_type(self) -> str:
         """Returns the return type."""
-        return GetReturnTypeMethod(self.signature)
+        return GetReturnType(self.signature)
+
+    @property
+    def full_parameters(self) -> List[MethodParameter]:
+        """Returns a list of full parameters."""
+        return GetFullParameters(self.signature)
 
     @property
     def parsed_method_name(self) -> str:
@@ -269,3 +276,4 @@ class SummarizedMethod:
             method = self.methods[-1]
             # method.code_churn = code_churn
             return method
+

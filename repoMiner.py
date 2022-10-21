@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from pydriller import RepositoryMining, GitRepository
+from pydriller import Repository, Git
 from data.types import RepoType, ModificationType
 from data.methods import Method, ModifiedMethod, SummarizedMethod
 from data.matchedFiles import MatchedFiles, NotMatchedFiles, MatchedAnalyzedFiles, NotMatchedAnalyzedFiles
@@ -24,27 +24,27 @@ class RepoMiner:
 
     def __init__(self, repoURL, first=None, second=None, fromCommit=None, since=None, to=None):
         start = time.perf_counter()
-        self.__gitRepo = GitRepository(repoURL)
+        self.__gitRepo = Git(repoURL)
 
         if first is not None and second is not None and since is None and to is None:
-            self.repo = RepositoryMining(repoURL, from_commit=first, to_commit=second)
+            self.repo = Repository(repoURL, from_commit=first, to_commit=second)
             self.__repo_type = RepoType.BETWEEN_COMMITS
         elif first is not None and second is None and since is None and to is None:
-            self.repo = RepositoryMining(repoURL, single=first)
+            self.repo = Repository(repoURL, single=first)
             self.__repo_type = RepoType.SINGLE_COMMIT
         elif first is None and second is None and since is not None and to is not None:
             try:
                 date1 = parser.parse(since)
                 date2 = parser.parse(to)
-                self.repo = RepositoryMining(repoURL, since=date1, to=date2)
+                self.repo = Repository(repoURL, since=date1, to=date2)
                 self.__repo_type = RepoType.DATETIME
             except Exception:
                 raise Exception("Entered Datetime is not valid.")
         elif fromCommit is not None:
-            self.repo = RepositoryMining(path_to_repo=repoURL, from_commit=fromCommit)
+            self.repo = Repository(path_to_repo=repoURL, from_commit=fromCommit)
             self.__repo_type = RepoType.FROM_COMMIT
         else:
-            self.repo = RepositoryMining(path_to_repo=repoURL)
+            self.repo = Repository(path_to_repo=repoURL)
             self.__repo_type = RepoType.ALL
 
         print("repoMiner was created")
@@ -236,7 +236,7 @@ class RepoMiner:
             commit_hash = commit.hash
             analyzed_files = []
             self.__commits.append(commit.hash)
-            for file in commit.modifications:
+            for file in commit.modified_files:
                 if JAVA_FILE_SUFFIX in file.filename:
                     print(commit.hash, file.filename)
                     self.__files.append(file.filename)

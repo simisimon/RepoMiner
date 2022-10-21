@@ -1,7 +1,9 @@
+from doctest import OutputChecker
 from flask import Flask, render_template, flash
 from forms import InputRepoForm
 from repoMiner import RepoMiner
 from utils import visualization
+from dash import Input, Output
 import dashApp
 import os
 import uuid
@@ -54,7 +56,11 @@ def main():
             bc = visualization.MethodsPerCommit(repo)
 
             charts = [tm, bc]
-            dashApp.create_dashApp(__name__, app, charts, randomId)
+
+            try:
+                dashApp.create_dashApp(__name__, app, charts, randomId)
+            except Exception:
+               flash(f'Visualizations cannot be created!', 'error') 
 
             if os.path.isdir(url):
                 flash(f'The entered repository is a local directory!', 'success')

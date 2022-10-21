@@ -3,9 +3,9 @@ class AnalyzedFile:
         self.commit = commit  # str: commit hash
         self.file_name = file.filename  # str: file_name
         self.modified_methods = methods  # List[ModifiedMethod]
-        self.added = file.added  # int: total number of added lines
-        self.deleted = file.removed  # int: total number of deleted lines
-        self.modified_lines = file.added + file.removed  # int: total number of modified lines
+        self.added = file.added_lines  # int: total number of added lines
+        self.deleted = file.deleted_lines  # int: total number of deleted lines
+        self.modified_lines = file.added_lines + file.deleted_lines  # int: total number of modified lines
         self.is_test_file = is_test_file  # bool: returns true if file is test file, otherwise false
         self.type = file.change_type.name  # change type of file
         self.source_code = file.source_code  # str: source code

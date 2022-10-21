@@ -17,8 +17,8 @@ We integrated the change-based analysis into a web application to visualize its 
    ```
    - on windows, the environment variable syntax depends on command line interpreter:
    ```bash
-   $ C:\path\to\app>set FLASK_APP=main.py
-   $ python main.py
+   $ $env:FLASK_APP="base.py"
+   $ flask run
    ```
    - otherwise check out the [Flask](https://flask.palletsprojects.com/en/1.1.x/) introduction
    

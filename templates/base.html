@@ -7,6 +7,8 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+        <!-- FontAwesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-dyZtM4Q1Q6Xo8Xz6Q+6Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='visualization.js') }}"></script>
@@ -25,7 +27,7 @@
             });
         </script>
 
-        <title>PyApp</title>
+        <title>RepoMiner - Change-based Analysis</title>
     </head>
     <body onload="UpdateCommitFields()">
         <header class="site-header">

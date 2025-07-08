@@ -1,242 +1,259 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <main role="main" class="container-fluid">
-    <div class="row">
-      <div class="col-md-6">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">
-                {{ message }}
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <div class="content-section">
-            <form method="POST" action="{{url_for('main')}}">
-                {{ form.hidden_tag()}}
-                <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Configure the change-based analysis</legend>
-                    <div class="form-group">
-                        {{ form.input.label(class="form-control-label")}}
-                        {% if form.input.errors %}
-                            {{ form.input(class="form-control form-control-lg is-invalid")}}
-                            <div class="invalid-feedback">
-                                {% for error in form.input.errors %}
-                                    <span> {{ error }}</span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.input(class="form-control form-control-lg")}}
-                        {% endif %}
-                    </div>
-                    <div class="form-group">
-                      {{ form.select(class="form-control", onchange="UpdateCommitFields()") }}
-                    </div>
-                    <div class="form-group">
-                      {{ form.commit1(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
-                    </div>
-                    <div class="form-group">
-                      {{ form.commit2(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
-                    </div>
-                    <div class="form-group">
-                      {{ form.date1(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
-                    </div>
-                    <div class="form-group">
-                      {{ form.date2(class="form-control", style="display:none", onblur="activeSubmitButton(this)")}}
-                    </div>
-                </fieldset>
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-outline-info", id="start", disabled="true")}}
-                    <button id="clear" class="btn btn-outline-info" onclick="Clear()">Clear</button>
-                    <button id="clearAll" class="btn btn-outline-info" onclick="ClearAll()">Clear All</button>
-                </div>
-            </form>
+<main role="main" class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+          <i class="fas fa-search fa-lg mr-2"></i>
+          <span>Configure Change-based Analysis</span>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="content-section">
-          <h3>Information</h3>
-          <p class='text-muted'>
-              <p>
-                  How to use the change-based analysis?
-              </p>
-              <ol>
-                    <li>Enter the path to software repository.</li>
-                    <li>Select variant of the analysis</li>
-                    <li>If necessary, enter commits to configure the analysis variant.</li>
-                    <li>Start the analysis by pressing the start button.</li>
-              </ol>
-              {% if infos %}
-                <div class="wrapper">
-                    <h3> Statistical results of the analysis</h3>
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr>
-                                <th style="width:50%;">Property</th>
-                                <th style="width:50%;">Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Project name</td>
-                                <td>{{ infos[0] }}</td>
-                            </tr>
-                            <tr>
-                                <td>Number of analyzed commits</td>
-                                <td>{{ infos[1] }}</td>
-                            </tr>
-                            <tr>
-                                <td>Number of analyzed files</td>
-                                <td>{{ infos[2] }}</td>
-                            </tr>
-                            <tr>
-                                <td>Number of identified methods</td>
-                                <td>{{ infos[3] }}</td>
-                            </tr>
-                            <tr>
-                                <td>Number of production methods</td>
-                                <td>{{ infos[4] }}</td>
-                            </tr>
-                            <tr>
-                                <td>Number of test methods</td>
-                                <td>{{ infos[5] }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="card-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                  {{ message }}
                 </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          <form method="POST" action="{{url_for('main')}}">
+            {{ form.hidden_tag() }}
+            <div class="form-group mb-3">
+              <label for="input"><i class="fas fa-folder-open mr-1"></i>Repository Path</label>
+              {% if form.input.errors %}
+                {{ form.input(class="form-control is-invalid", id="input") }}
+                <div class="invalid-feedback">
+                  {% for error in form.input.errors %}
+                    <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {{ form.input(class="form-control", id="input") }}
               {% endif %}
-            </ul>
-          </p>
+            </div>
+            <div class="form-group mb-3">
+              <label for="select"><i class="fas fa-sliders-h mr-1"></i>Analysis Variant</label>
+              {{ form.select(class="form-control", id="select", onchange="UpdateCommitFields()") }}
+            </div>
+            <div class="form-row mb-3">
+              <div class="col">
+                {{ form.commit1(class="form-control", id="commit1", style="display:none", placeholder="Commit 1", onblur="activeSubmitButton(this)") }}
+              </div>
+              <div class="col">
+                {{ form.commit2(class="form-control", id="commit2", style="display:none", placeholder="Commit 2", onblur="activeSubmitButton(this)") }}
+              </div>
+            </div>
+            <div class="form-row mb-3">
+              <div class="col">
+                {{ form.date1(class="form-control", id="date1", style="display:none", placeholder="Since", onblur="activeSubmitButton(this)") }}
+              </div>
+              <div class="col">
+                {{ form.date2(class="form-control", id="date2", style="display:none", placeholder="To", onblur="activeSubmitButton(this)") }}
+              </div>
+            </div>
+            <div class="d-flex justify-content-between">
+              {{ form.submit(class="btn btn-primary px-4", id="start", disabled="true") }}
+              <button id="clear" class="btn btn-outline-secondary" onclick="Clear()" type="button"><i class="fas fa-eraser"></i> Clear</button>
+              <button id="clearAll" class="btn btn-outline-danger" onclick="ClearAll()" type="button"><i class="fas fa-trash"></i> Clear All</button>
+            </div>
+          </form>
         </div>
       </div>
-      <div id="table" class="col-md-12">
-        {% if methods_data %}
-          <div class="content-section">
-              <select class="custom-select" id="table-select" onchange="SwitchTables()">
-                  <option value="all">All Methods</option>
-                  <option value="only">Only Methods</option>
-                  <option value="test">Test Methods</option>
-              </select>
-              <div class="wrapper" id="all_methods_wrapper" style="display:block">
-                <table border="0" cellpadding="0" cellspacing="0" class="scroll table-hover table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width:50%;">Methode</th>
-                            <th style="width:20%;">Typ</th>
-                            <th style="width:15%;">Code Churn</th>
-                            <th style="width:15%;">Change Frequency</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for method in methods_data[0] %}
-                        <tr>
-                            <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
-                                <span class="MoreData">
-                                    Commit: {{ method.commit }} <br>
-                                    File name: {{ method.file_name }} <br>
-                                    Added: {{ method.added }} <br>
-                                    Deleted: {{ method.deleted }} <br>
-                                    {% if method.type == "RENAMED" %}
-                                    Ratio Signature: {{ method.ratio_signature }} <br>
-                                    Ratio Method Body: {{ method.ratio_method_body }} <br>
-                                    {% endif %}
-                                    {% if method.old_long_name %}
-                                    Old name: {{ method.old_long_name }}
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td style="width:20%;">{{ method.type }}</td>
-                            <td style="width:15%;">{{ method.code_churn }}</td>
-                            <td style="width:15%;">{{ method.change_frequency }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-              <div class="wrapper" id="only_methods_wrapper" style="display:none">
-                <table border="0" cellpadding="0" cellspacing="0" class="scroll table-hover table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width:50%;">Methode</th>
-                            <th style="width:20%;">Typ</th>
-                            <th style="width:15%;">Code Churn</th>
-                            <th style="width:15%;">Change Frequency</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for method in methods_data[1] %}
-                        <tr>
-                            <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
-                                <span class="MoreData">
-                                    Commit: {{ method.commit }} <br>
-                                    File name: {{ method.file_name }} <br>
-                                    Added: {{ method.added }} <br>
-                                    Deleted: {{ method.deleted }} <br>
-                                    {% if method.type == "RENAMED" %}
-                                    Ratio Signature: {{ method.ratio_signature }} <br>
-                                    Ratio Method Body: {{ method.ratio_method_body }} <br>
-                                    {% endif %}
-                                    {% if method.old_long_name %}
-                                    Old name: {{ method.old_long_name }}
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td style="width:20%;">{{ method.type }}</td>
-                            <td style="width:15%;">{{ method.code_churn }}</td>
-                            <td style="width:15%;">{{ method.change_frequency }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-              <div class="wrapper" id="test_methods_wrapper" style="display:none">
-                <table border="0" cellpadding="0" cellspacing="0" class="scroll table-hover table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th style="width:50%;">Methode</th>
-                            <th style="width:20%;">Typ</th>
-                            <th style="width:15%;">Code Churn</th>
-                            <th style="width:15%;">Change Frequency</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for method in methods_data[2] %}
-                        <tr>
-                            <td class="CellWithMoreData" style="width:50%;">{{ method.long_name }}
-                                <span class="MoreData">
-                                    Commit: {{ method.commit }} <br>
-                                    File name: {{ method.file_name }} <br>
-                                    Added: {{ method.added }} <br>
-                                    Deleted: {{ method.deleted }} <br>
-                                    {% if method.type == "RENAMED" %}
-                                    Ratio Signature: {{ method.ratio_signature }} <br>
-                                    Ratio Method Body: {{ method.ratio_method_body }} <br>
-                                    {% endif %}
-                                    {% if method.old_long_name %}
-                                    Old name: {{ method.old_long_name }}
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td style="width:20%;">{{ method.type }}</td>
-                            <td style="width:15%;">{{ method.code_churn }}</td>
-                            <td style="width:15%;">{{ method.change_frequency }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-              </div>
-          </div>
-        {% endif %}
+      <div class="card mt-4 shadow-sm">
+        <div class="card-header bg-info text-white">
+          <i class="fas fa-info-circle mr-2"></i>How to use the analysis?
+        </div>
+        <div class="card-body">
+          <ol class="mb-2">
+            <li>Enter the path to a local software repository.</li>
+            <li>Select the analysis variant.</li>
+            <li>If necessary, enter commits or dates.</li>
+            <li>Click <b>Start</b> to begin the analysis.</li>
+          </ol>
+        </div>
       </div>
-        {% if treemap %}
-          <div class="col-md-12">
-            <div class="embed-responsive embed-responsive-16by9">
-                <iframe id="treemap" class="embed-responsive-item" src="http://127.0.0.1:5000/{{ infos[6] }}/"/>
+    </div>
+    <div class="col-lg-7 mb-4">
+      {% if infos %}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <div class="card border-success h-100">
+            <div class="card-body text-success">
+              <h5 class="card-title"><i class="fas fa-project-diagram mr-2"></i>Project</h5>
+              <p class="card-text mb-0"><b>{{ infos[0] }}</b></p>
             </div>
           </div>
-        {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card border-primary h-100">
+            <div class="card-body text-primary">
+              <h5 class="card-title"><i class="fas fa-code-branch mr-2"></i>Commits</h5>
+              <p class="card-text mb-0"><b>{{ infos[1] }}</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card border-secondary h-100">
+            <div class="card-body text-secondary">
+              <h5 class="card-title"><i class="fas fa-file-alt mr-2"></i>Files</h5>
+              <p class="card-text mb-0"><b>{{ infos[2] }}</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card border-warning h-100">
+            <div class="card-body text-warning">
+              <h5 class="card-title"><i class="fas fa-cogs mr-2"></i>Methods</h5>
+              <p class="card-text mb-0">All: <b>{{ infos[3] }}</b><br>Production: <b>{{ infos[4] }}</b><br>Test: <b>{{ infos[5] }}</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if methods_data %}
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light d-flex align-items-center">
+          <i class="fas fa-table mr-2"></i>
+          <span>Methods Table</span>
+        </div>
+        <div class="card-body">
+          <select class="custom-select mb-3" id="table-select" onchange="SwitchTables()">
+            <option value="all">All Methods</option>
+            <option value="only">Only Methods</option>
+            <option value="test">Test Methods</option>
+          </select>
+          <div class="wrapper" id="all_methods_wrapper" style="display:block">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered table-sm">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Methode</th>
+                    <th>Typ</th>
+                    <th>Code Churn</th>
+                    <th>Change Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for method in methods_data[0] %}
+                  <tr>
+                    <td class="CellWithMoreData">{{ method.long_name }}
+                      <span class="MoreData">
+                        Commit: {{ method.commit }} <br>
+                        File name: {{ method.file_name }} <br>
+                        Added: {{ method.added }} <br>
+                        Deleted: {{ method.deleted }} <br>
+                        {% if method.type == "RENAMED" %}
+                        Ratio Signature: {{ method.ratio_signature }} <br>
+                        Ratio Method Body: {{ method.ratio_method_body }} <br>
+                        {% endif %}
+                        {% if method.old_long_name %}
+                        Old name: {{ method.old_long_name }}
+                        {% endif %}
+                      </span>
+                    </td>
+                    <td>{{ method.type }}</td>
+                    <td>{{ method.code_churn }}</td>
+                    <td>{{ method.change_frequency }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="wrapper" id="only_methods_wrapper" style="display:none">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered table-sm">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Methode</th>
+                    <th>Typ</th>
+                    <th>Code Churn</th>
+                    <th>Change Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for method in methods_data[1] %}
+                  <tr>
+                    <td class="CellWithMoreData">{{ method.long_name }}
+                      <span class="MoreData">
+                        Commit: {{ method.commit }} <br>
+                        File name: {{ method.file_name }} <br>
+                        Added: {{ method.added }} <br>
+                        Deleted: {{ method.deleted }} <br>
+                        {% if method.type == "RENAMED" %}
+                        Ratio Signature: {{ method.ratio_signature }} <br>
+                        Ratio Method Body: {{ method.ratio_method_body }} <br>
+                        {% endif %}
+                        {% if method.old_long_name %}
+                        Old name: {{ method.old_long_name }}
+                        {% endif %}
+                      </span>
+                    </td>
+                    <td>{{ method.type }}</td>
+                    <td>{{ method.code_churn }}</td>
+                    <td>{{ method.change_frequency }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="wrapper" id="test_methods_wrapper" style="display:none">
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered table-sm">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Methode</th>
+                    <th>Typ</th>
+                    <th>Code Churn</th>
+                    <th>Change Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for method in methods_data[2] %}
+                  <tr>
+                    <td class="CellWithMoreData">{{ method.long_name }}
+                      <span class="MoreData">
+                        Commit: {{ method.commit }} <br>
+                        File name: {{ method.file_name }} <br>
+                        Added: {{ method.added }} <br>
+                        Deleted: {{ method.deleted }} <br>
+                        {% if method.type == "RENAMED" %}
+                        Ratio Signature: {{ method.ratio_signature }} <br>
+                        Ratio Method Body: {{ method.ratio_method_body }} <br>
+                        {% endif %}
+                        {% if method.old_long_name %}
+                        Old name: {{ method.old_long_name }}
+                        {% endif %}
+                      </span>
+                    </td>
+                    <td>{{ method.type }}</td>
+                    <td>{{ method.code_churn }}</td>
+                    <td>{{ method.change_frequency }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if treemap %}
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light d-flex align-items-center">
+          <i class="fas fa-chart-area mr-2"></i>
+          <span>Visualization</span>
+        </div>
+        <div class="card-body">
+          {{ treemap|safe }}
+        </div>
+      </div>
+      {% endif %}
     </div>
-  </main>
+  </div>
+</main>
 {% endblock %}

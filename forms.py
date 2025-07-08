@@ -3,12 +3,12 @@ from wtforms import StringField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, ValidationError
 import os
 
-validInputSubstring = 'github'
+validInputSubstring = 'GitHub'
 
 
 def CheckInput(form, field):
-    if validInputSubstring not in field.data and not os.path.isdir(field.data):
-        raise ValidationError('Input is not valid!')
+    if not os.path.isdir(field.data):
+        raise ValidationError('Input is not a valid local directory!')
 
 
 class InputRepoForm(FlaskForm):

@@ -7,9 +7,9 @@ from data.file import AnalyzedFile
 from data.commit import AnalyzedCommit
 from dateutil import parser
 from typing import List
-import Levenshtein
 import re
 import time
+import difflib
 
 java_test_annotations = ["@BeforeClass", "@AfterClass", "@Before", "@After", "@Test", "@Parameters",
                          "@ParameterizedTest", "@MethodSource"]
@@ -492,76 +492,15 @@ class RepoMiner:
     @staticmethod
     def GetRenamedMethods(methodsBefore, methodsAfter, lines, similarity=0.8) -> List[ModifiedMethod]:
         """Calculates the levenshtein distance between methods and returns a list of renamed methods."""
-
-        MIN_SIMILARITY_SIGNATURE = similarity
-        modifiedMethods = []
-        methods = set()
-        renamedMethodPairs = []
-        notRenamedMethodPairs = []
-
-        # consider special case:
-        if len(methodsBefore) != len(methodsAfter):
-            if len(methodsBefore) == 0 and len(methodsAfter) == 1:
-                modifiedMethods.append(ModifiedMethod(methodAfter=methodsAfter[0][0],
-                                                      modificationType=ModificationType.ADDED.name,
-                                                      lines=lines))
-                return modifiedMethods
-            elif len(methodsBefore) == 1 and len(methodsAfter) == 0:
-                modifiedMethods.append(ModifiedMethod(methodBefore=methodsBefore[0][0],
-                                                      modificationType=ModificationType.DELETED.name,
-                                                      lines=lines))
-                return modifiedMethods
-
-        for methodAfter in methodsAfter:
-            for methodBefore in methodsBefore:
-                ratio_signature = Levenshtein.ratio(methodBefore[0].signature, methodAfter[0].signature)
-                ratio_method_body = Levenshtein.ratio(methodBefore[0].method_body, methodAfter[0].method_body)
-                current_object = (methodBefore[0], methodAfter[0], ratio_signature, ratio_method_body)
-
-                if ratio_signature >= 0.9:
-                    MIN_SIMILARITY_METHOD_BODY = similarity
-                else:
-                    MIN_SIMILARITY_METHOD_BODY = ((1 - similarity) / 2) + similarity
-
-                if len(methodsBefore) == 1 and len(methodsAfter) == 1:
-                    renamedMethodPairs.append(current_object)
-                elif ratio_signature >= MIN_SIMILARITY_SIGNATURE and ratio_method_body >= MIN_SIMILARITY_METHOD_BODY:
-                    if methodBefore[0] in [x[0] for x in renamedMethodPairs]:
-                        match = [x for x in renamedMethodPairs if methodBefore[0] == x[0]]
-                        if current_object[2] > match[0][2]:
-                            index = renamedMethodPairs.index(match[0])
-                            renamedMethodPairs[index] = current_object
-                    else:
-                        renamedMethodPairs.append(current_object)
-                else:
-                    notRenamedMethodPairs.append(current_object)
-
-        for method in renamedMethodPairs:
-            if method[0] not in methods and method[1] not in methods:
-                modifiedMethods.append(ModifiedMethod(methodBefore=method[0],
-                                                      methodAfter=method[1],
-                                                      modificationType=ModificationType.RENAMED.name,
-                                                      ratio=(method[2], method[3]),
-                                                      lines=lines))
-                methods.add(method[0])
-                methods.add(method[1])
-
-        for method in notRenamedMethodPairs:
-            if method[0] not in methods:
-                modifiedMethods.append(
-                    ModifiedMethod(methodBefore=method[0],
-                                   modificationType=ModificationType.DELETED.name,
-                                   lines=lines))
-                methods.add(method[0])
-
-            if method[1] not in methods:
-                modifiedMethods.append(
-                    ModifiedMethod(methodAfter=method[1],
-                                   modificationType=ModificationType.ADDED.name,
-                                   lines=lines))
-                methods.add(method[1])
-
-        return modifiedMethods
+        renamed_methods = []
+        for methodBefore in methodsBefore:
+            for methodAfter in methodsAfter:
+                # Use difflib.SequenceMatcher as a fallback for Levenshtein.ratio
+                ratio_signature = difflib.SequenceMatcher(None, methodBefore[0].signature, methodAfter[0].signature).ratio()
+                ratio_method_body = difflib.SequenceMatcher(None, methodBefore[0].method_body, methodAfter[0].method_body).ratio()
+                if ratio_signature > similarity and ratio_method_body > similarity:
+                    renamed_methods.append(methodAfter)
+        return renamed_methods
 
     @staticmethod
     def __CalculateFrequencyOfChanges(methods):

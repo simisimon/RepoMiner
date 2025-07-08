@@ -2,29 +2,33 @@ import plotly.express as px
 import plotly.graph_objects as go
 import re
 
-def Treemap(production_methods):
-    methods = []
-    for method in production_methods:
-        data = {
-            "commit": method.commit,
-            "file_name": method.file_name,
-            "long_name": method.long_name,
-            "code_churn": method.code_churn,
-            "change_frequency": method.change_frequency,
-            "type": method.type,
-        }
-        methods.append(data)
+def Treemap(methods):
+    # If methods is empty, return a placeholder figure
+    if not methods:
+        fig = go.Figure()
+        fig.update_layout(title="No data available for Treemap")
+        return fig
 
-    # bei Dateien bestimmt der Average der Summe der veränderten Methoden die Färbung
-    fig = px.treemap(methods,
-                     path=['commit', 'file_name', 'long_name'],
-                     values='change_frequency',
-                     color='code_churn',
-                     color_continuous_scale='Reds',
-                     hover_data=["long_name", "type"],
-                     )
+    # If methods is a list of objects, convert to list of dicts
+    if hasattr(methods[0], '__dict__'):
+        data = [m.__dict__ for m in methods]
+    else:
+        data = methods
 
-    #fig.show()
+    # Check for required columns
+    required_columns = {"commit", "file_name", "long_name", "change_frequency", "type"}
+    if not all(col in data[0] for col in required_columns):
+        fig = go.Figure()
+        fig.update_layout(title="Data format error for Treemap")
+        return fig
+
+    fig = px.treemap(
+        data,
+        path=['commit', 'file_name', 'long_name'],
+        values='change_frequency',
+        color='type',
+        hover_data=["long_name", "type"],
+    )
     return fig
 
 

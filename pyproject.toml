@@ -5,16 +5,18 @@ description = ""
 authors = ["Sebastian Simon <Bastisimon95@googlemail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-PyDriller = "^2.1"
-Flask = "^2.2.2"
-plotly = "^5.10.0"
-dash = "^2.6.2"
+python = ">=3.10,<3.14"
+Flask = "^2.3.3"
+Flask-WTF = "^1.2.1"
+WTForms = "^3.1.2"
+PyDriller = "^2.5.0"
+plotly = "^5.21.0"
+dash = "^2.17.0"
 javalang = "^0.13.0"
-python-Levenshtein = "^0.20.7"
 lizard = "^1.17.10"
-python-dateutil = "^2.8.2"
-pandas = "^1.5.1"
+python-dateutil = "^2.9.0.post0"
+pandas = "^2.2.2"
+numpy = "^1.26.4"
 
 [tool.poetry.dev-dependencies]
 

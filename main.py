@@ -7,6 +7,7 @@ from dash import Input, Output
 import dashApp
 import os
 import uuid
+import traceback
 
 app = Flask(__name__)
 
@@ -25,18 +26,27 @@ def main():
     if form.validate_on_submit():
         try:
             repo = None
-            url = form.input.data
+            repo_path = form.input.data
             firstCommit = form.commit1.data
             secondCommit = form.commit2.data
             date1 = form.date1.data
             date2 = form.date2.data
 
-            if url and firstCommit and not secondCommit and not date1 and not date2:
-                repo = RepoMiner(url, first=firstCommit)
-            if url and firstCommit and secondCommit and not date1 and not date2:
-                repo = RepoMiner(url, first=firstCommit, second=secondCommit)
-            if url and not firstCommit and not secondCommit and date1 and date2:
-                repo = RepoMiner(url, since=date1, to=date2)
+            # Only allow local paths
+            is_url = repo_path.startswith("http://") or repo_path.startswith("https://")
+            if is_url:
+                flash('Only local repository paths are allowed. Please clone the repository and provide the local path.', 'danger')
+                return render_template('main.html', form=form)
+
+            repo_path = os.path.abspath(repo_path)
+            print("repo_path", repo_path)
+
+            if repo_path and firstCommit and not secondCommit and not date1 and not date2:
+                repo = RepoMiner(repo_path, first=firstCommit)
+            if repo_path and firstCommit and secondCommit and not date1 and not date2:
+                repo = RepoMiner(repo_path, first=firstCommit, second=secondCommit)
+            if repo_path and not firstCommit and not secondCommit and date1 and date2:
+                repo = RepoMiner(repo_path, since=date1, to=date2)
 
             all_methods = repo.modified_methods
             only_methods = repo.production_methods
@@ -62,7 +72,7 @@ def main():
             except Exception:
                flash(f'Visualizations cannot be created!', 'error') 
 
-            if os.path.isdir(url):
+            if os.path.isdir(repo_path):
                 flash(f'The entered repository is a local directory!', 'success')
             else:
                 flash(f'The entered repository is not a local directory!', 'warning')
@@ -76,7 +86,7 @@ def main():
 
         except Exception as e:
             flash(f'Something went wrong', 'danger')
-            print(e.with_traceback())
+            traceback.print_exc()  # <-- This will print the full traceback to the terminal
             return render_template('main.html', form=form)
     return render_template('main.html', form=form)
 

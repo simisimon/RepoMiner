@@ -171,4 +171,105 @@ table.scroll tbody tr td {
     display:block;
 }
 
+/* Modern card and section styles */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 24px;
+}
+.card-header {
+  font-weight: 500;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #eaeaea;
+  background: #f8f9fa;
+}
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.card-body {
+  padding: 1.25rem;
+}
+
+/* Icon spacing */
+.fa, .fas {
+  margin-right: 0.5em;
+}
+
+/* Table improvements */
+.table th, .table td {
+  vertical-align: middle;
+}
+.table thead th {
+  background: #343a40;
+  color: #fff;
+  border: none;
+}
+.table-hover tbody tr:hover {
+  background: #f1f3f6;
+}
+
+/* Responsive tweaks */
+@media (max-width: 991px) {
+  .card {
+    margin-bottom: 16px;
+  }
+}
+
+/* Button tweaks */
+.btn-primary {
+  background: #0056b3;
+  border: none;
+}
+.btn-outline-secondary, .btn-outline-danger {
+  min-width: 110px;
+}
+
+/* Section spacing */
+.py-4 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Info cards */
+.card.border-success {
+  border-width: 2px;
+}
+.card.border-primary {
+  border-width: 2px;
+}
+.card.border-secondary {
+  border-width: 2px;
+}
+.card.border-warning {
+  border-width: 2px;
+}
+
+/* Tooltip for MoreData */
+.CellWithMoreData {
+  position: relative;
+  cursor: pointer;
+}
+.MoreData {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  padding: 8px;
+  top: 25px;
+  left: 20px;
+  min-width: 200px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  color: #333;
+  font-size: 0.95em;
+}
+.CellWithMoreData:hover span.MoreData {
+  display: block;
+}
+
 

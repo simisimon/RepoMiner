@@ -1,30 +1,59 @@
 # RepoMiner
-RepoMiner is an approach to analyze the historical changes of software systems stored in version control systems. The analysis aims at finding critical code areas in form of modified methods and at finding test gaps. We call this approach the change-based analysis of software repositories.
 
-This approach was developed in the context of our master thesis. We validated different aspects of our change-based analysis by a comprehensive sample-based inspection. We provide detailed results of validating the sample sets (e.g. code artifacts, metric values, ratings, reasons), on our complementary [google docs document](https://docs.google.com/spreadsheets/d/1LMwUOiO33gK4oeYTnHs4tAKA53Rp1NBLijPJ28WjEmI/edit?usp=sharing).
+RepoMiner is a web application for analyzing and visualizing the historical changes in software repositories. It uses Flask for the web interface and Dash/Plotly for interactive visualizations.
 
-We integrated the change-based analysis into a web application to visualize its results. Currently, we show only a table with modified methods and a zoomable tree map. The web application is still in development and has not been tested.
+## Requirements
+- Python 3.10, 3.11, 3.12, or 3.13 (recommended: 3.10+)
+- [Poetry](https://python-poetry.org/) for dependency management
+- Git (for repository analysis)
 
-## How to start the web application? (Mac OS, Windows)
-1. Clone the repository
-2. Install all missing packages
-3. Start the web application using the terminal
-   - Go to the directory where main.py is located
-   - Use the following commands:
+## Installation
+
+1. **Clone the repository:**
    ```bash
-   $ export FLASK_APP=main.py
-   $ flask run
+   git clone <this-repo-url>
+   cd RepoMiner
    ```
-   - on windows, the environment variable syntax depends on command line interpreter:
+
+2. **Install dependencies:**
    ```bash
-   $ $env:FLASK_APP="base.py"
-   $ flask run
+   poetry install
    ```
-   - otherwise check out the [Flask](https://flask.palletsprojects.com/en/1.1.x/) introduction
-   
-## How to use the web application?
-1. Enter the path to a software repository. (It is recommended to clone the software repository in advance and to use the corresponding local directory.)
-2. Select variant of the analysis.
-3. If necessary, enter commits to configure the scope of the analysis variant.
-4. Start the analysis by pressing the start button.
+
+   If you do not have Poetry, install it with:
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
+
+3. **(Optional) Set Python version:**
+   If you have multiple Python versions, you can set the Python version for Poetry:
+   ```bash
+   poetry env use 3.10
+   ```
+   Or use your preferred compatible version (3.10+).
+
+## Running the App
+
+1. **Start the server:**
+   ```bash
+   poetry run python main.py
+   ```
+
+2. **Open your browser:**
+   Go to [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+## Usage Notes
+- Enter a local path or GitHub repository URL to analyze a repository.
+- The app will visualize method changes and other repository metrics.
+- If you see errors about missing repositories, ensure the path or URL is correct and accessible.
+
+## Python-Levenshtein Fallback
+- The app previously used `python-Levenshtein` for string similarity. On Python 3.13+, this library is not available, so a pure Python fallback (`difflib.SequenceMatcher`) is used. This may be slower for large repositories but works on all Python versions.
+
+## Troubleshooting
+- If you encounter dependency issues, ensure you are using a supported Python version (3.10+).
+- For repository analysis, make sure you have `git` installed and available in your PATH.
+
+## License
+MIT
 
